@@ -102,7 +102,7 @@ class ChApi ChLinkMasked : public ChLinkMarkers {
     void ChangedLinkMask();
 
     /// If some constraint is redundant, return to normal state
-    int RestoreRedundant();  ///< \return number of changed states
+    int RestoreRedundant() override;  ///< \return number of changed states
 
     /// User can use this to enable/disable all the constraint of
     /// the link as desired.
@@ -315,6 +315,8 @@ class ChApi ChLinkMasked : public ChLinkMarkers {
     // a Nx6 jacobian matrix for a body with 'w' rotations.
     static void Transform_Cq_to_Cqw(ChMatrix<>* mCq, ChMatrix<>* mCqw, ChBodyFrame* mbody);
 };
+
+CH_CLASS_VERSION(ChLinkMasked,0)
 
 }  // end namespace chrono
 

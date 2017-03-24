@@ -28,7 +28,8 @@ set(CH_CXX_FLAGS "${CH_CXX_FLAGS} ${CMAKE_CXX14_STANDARD_COMPILE_OPTION}")
 # This is a hack -- look for a more robust solution
 set(CH_CXX14 FALSE)
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-  if(CMAKE_CXX14_STANDARD_COMPILE_OPTION)
+  message(STATUS "GCC version:  ${CMAKE_CXX_COMPILER_VERSION}")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 4.9)
     set(CH_CXX14 TRUE)
   endif()
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
@@ -172,6 +173,20 @@ if(FMA_FOUND)
 else()
   message(STATUS "  No FMA support")
 endif()  
+
+# Pass -mfma flag to configuration file if fma is found
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${FMA_FLAGS}")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${FMA_FLAGS}")
+  set(CH_CXX_FLAGS "${CH_CXX_FLAGS} ${FMA_FLAGS}")
+  set(CH_C_FLAGS "${CH_C_FLAGS} ${FMA_FLAGS}")
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${FMA_FLAGS}")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${FMA_FLAGS}")
+  set(CH_CXX_FLAGS "${CH_CXX_FLAGS} ${FMA_FLAGS}")
+  set(CH_C_FLAGS "${CH_C_FLAGS} ${FMA_FLAGS}")
+endif()
+
 
 #-----------------------------------------------------------------------------
 # MPI support
@@ -336,6 +351,7 @@ else()
   set(CHRONO_PARALLEL "#undef CHRONO_PARALLEL")
 endif()
 
+# Note: OPENGL must be configured *after* PARALLEL
 if(ENABLE_MODULE_OPENGL)
   set(CHRONO_OPENGL "#define CHRONO_OPENGL")
 else()
@@ -434,5 +450,5 @@ configure_file("${PROJECT_SOURCE_DIR}/cmake/ChronoConfig.cmake.in"
                @ONLY)
 
 install(FILES "${PROJECT_BINARY_DIR}/cmake/ChronoConfig.cmake.install"
-        DESTINATION cmake
+        DESTINATION lib64/cmake
         RENAME ChronoConfig.cmake)

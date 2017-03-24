@@ -59,7 +59,7 @@ class ParticleGenerator {
         this->simTime_lastPcreated = 0.0;
         this->totalParticles = 0;
         this->totalParticleMass = 0.0;
-        this->mu = mu;
+        this->mu = (float)mu;
 
         // keep track of some statistics
         this->pRadMean = 0.0;
@@ -90,7 +90,7 @@ class ParticleGenerator {
             GetLog() << "probably shouldn't have mu > 1.0   \n";
 
         // set mu anyway if >1.0
-        this->mu = newMu;
+        this->mu = (float)newMu;
     }
 
     const double getSphDensity() { return this->sphDens; }
@@ -397,7 +397,7 @@ class TestMech {
         // ******
         // create a body that will be used as a vehicle weight
         ChVector<> weightCM = ChVector<>(trussCM);
-        weightCM.y += 1.0;  // note: this will determine the spring free length
+        weightCM.y() += 1.0;  // note: this will determine the spring free length
 
         suspweight = std::make_shared<ChBodyEasyBox>(0.2, 0.4, 0.2, 5000.0, false, true);
         suspweight->SetPos(weightCM);
@@ -613,25 +613,25 @@ class MyEventReceiver : public IEventReceiver {
         // wheel CM pos
         ChVector<> cm = mwheel->wheel->GetPos();
         char message5[100];
-        sprintf(message5, "CM pos, x: %4.4g, y: %4.4g, z: %4.4g", cm.x, cm.y, cm.z);
+        sprintf(message5, "CM pos, x: %4.4g, y: %4.4g, z: %4.4g", cm.x(), cm.y(), cm.z());
         text_cmPos = mapp->GetIGUIEnvironment()->addStaticText(core::stringw(message5).c_str(),
                                                                rect<s32>(10, 30, 280, 45), false, false, gad_tab_wheel);
         // wheel CM vel
         ChVector<> cmVel = mwheel->wheel->GetPos_dt();
         char messageV[100];
-        sprintf(messageV, "CM vel, x: %4.4g, y: %4.4g, z: %4.4g", cmVel.x, cmVel.y, cmVel.z);
+        sprintf(messageV, "CM vel, x: %4.4g, y: %4.4g, z: %4.4g", cmVel.x(), cmVel.y(), cmVel.z());
         text_cmVel = mapp->GetIGUIEnvironment()->addStaticText(core::stringw(message5).c_str(),
                                                                rect<s32>(10, 60, 280, 75), false, false, gad_tab_wheel);
         // rxn. forces on spindle, in the local coordinate system
         ChVector<> rxnF = mtester->spindle->Get_react_force();
         char messageF[100];
-        sprintf(messageF, "spindle Rxn. F, x: %4.3g, y: %4.3g, z: %4.3g", rxnF.x, rxnF.y, rxnF.z);
+        sprintf(messageF, "spindle Rxn. F, x: %4.3g, y: %4.3g, z: %4.3g", rxnF.x(), rxnF.y(), rxnF.z());
         text_spindleForces = mapp->GetIGUIEnvironment()->addStaticText(
             core::stringw(message5).c_str(), rect<s32>(10, 90, 280, 105), false, false, gad_tab_wheel);
         // rxn. torques on spindle, in local coordinate system
         ChVector<> rxnT = mtester->spindle->Get_react_torque();
         char messageT[100];
-        sprintf(messageT, "spindle Rxn. T, x: %4.3g, y: %4.3g, z: %4.3g", rxnT.x, rxnT.y, rxnT.z);
+        sprintf(messageT, "spindle Rxn. T, x: %4.3g, y: %4.3g, z: %4.3g", rxnT.x(), rxnT.y(), rxnT.z());
         text_spindleTorque = mapp->GetIGUIEnvironment()->addStaticText(
             core::stringw(messageT).c_str(), rect<s32>(10, 120, 280, 135), false, false, gad_tab_wheel);
 
@@ -690,7 +690,7 @@ class MyEventReceiver : public IEventReceiver {
                     if (id == 1104)  // # particles to generate
                     {
                         s32 currPos = ((IGUIScrollBar*)event.GUIEvent.Caller)->getPos();
-                        this->currNparticlesGen = nParticlesGenMax + ((currPos - 50) / 50.0) * nParticlesGenMax;
+                        this->currNparticlesGen = nParticlesGenMax + int(double(currPos - 50) / 50.0) * nParticlesGenMax;
                         char message[50];
                         sprintf(message, "# p Gen: %d", this->currNparticlesGen);
                         text_nParticlesGen->setText(core::stringw(message).c_str());
@@ -762,6 +762,8 @@ class MyEventReceiver : public IEventReceiver {
                     }
                     */
                     break;
+                default:
+                    break;
             }
         }
 
@@ -784,19 +786,19 @@ class MyEventReceiver : public IEventReceiver {
         // wall 1
         ChCoordsys<> wall1Csys = this->mtester->wall1->GetCoord();
         wall1Csys.rot = chrono::Q_from_AngAxis(CH_C_PI / 2.0, VECT_Y);
-        wall1Csys.pos.x += .05;
+        wall1Csys.pos.x() += .05;
         ChIrrTools::drawGrid(this->mapp->GetVideoDriver(), 0.1, 0.05, 24, 20, wall1Csys,
                              video::SColor(255, 80, 130, 130), true);
 
         // wall 3
         ChCoordsys<> wall3Csys = this->mtester->wall3->GetCoord();
-        wall3Csys.pos.z += .05;
+        wall3Csys.pos.z() += .05;
         ChIrrTools::drawGrid(this->mapp->GetVideoDriver(), 0.1, 0.05, 10, 20, wall3Csys,
                              video::SColor(255, 80, 130, 130), true);
 
         // wall 4
         ChCoordsys<> wall4Csys = this->mtester->wall4->GetCoord();
-        wall4Csys.pos.z -= .05;
+        wall4Csys.pos.z() -= .05;
         ChIrrTools::drawGrid(this->mapp->GetVideoDriver(), 0.1, 0.05, 10, 20, wall4Csys,
                              video::SColor(255, 80, 130, 130), true);
     }
@@ -805,22 +807,22 @@ class MyEventReceiver : public IEventReceiver {
     void drawWheelOutput() {
         ChVector<> cm = mwheel->wheel->GetPos();
         char messageCM[100];
-        sprintf(messageCM, "CM pos, x: %4.4g, y: %4.4g, z: %4.4g", cm.x, cm.y, cm.z);
+        sprintf(messageCM, "CM pos, x: %4.4g, y: %4.4g, z: %4.4g", cm.x(), cm.y(), cm.z());
         text_cmPos->setText(core::stringw(messageCM).c_str());
         // wheel CM vel
         ChVector<> cmVel = mwheel->wheel->GetPos_dt();
         char messageV[100];
-        sprintf(messageV, "CM vel, x: %4.4g, y: %4.4g, z: %4.4g", cmVel.x, cmVel.y, cmVel.z);
+        sprintf(messageV, "CM vel, x: %4.4g, y: %4.4g, z: %4.4g", cmVel.x(), cmVel.y(), cmVel.z());
         text_cmVel->setText(core::stringw(messageV).c_str());
         // rxn. forces on spindle
         ChVector<> rxnF = mtester->spindle->Get_react_force();
         char messageF[100];
-        sprintf(messageF, "spindle Rxn. F, x: %4.3g, y: %4.3g, z: %4.3g", rxnF.x, rxnF.y, rxnF.z);
+        sprintf(messageF, "spindle Rxn. F, x: %4.3g, y: %4.3g, z: %4.3g", rxnF.x(), rxnF.y(), rxnF.z());
         text_spindleForces->setText(core::stringw(messageF).c_str());
         // rxn. torques on spindle
         ChVector<> rxnT = mtester->spindle->Get_react_torque();
         char messageT[100];
-        sprintf(messageT, "spindle Rxn. T, x: %4.3g, y: %4.3g, z: %4.3g", rxnT.x, rxnT.y, rxnT.z);
+        sprintf(messageT, "spindle Rxn. T, x: %4.3g, y: %4.3g, z: %4.3g", rxnT.x(), rxnT.y(), rxnT.z());
         text_spindleTorque->setText(core::stringw(messageT).c_str());
     }
 
@@ -958,8 +960,8 @@ int main(int argc, char* argv[]) {
     application.SetUserEventReceiver(&receiver);
 
     // Set some integrator settings
-    // mphysicalSystem.SetSolverType(ChSystem::SOLVER_APGD);
-    mphysicalSystem.SetSolverType(ChSystem::SOLVER_SOR_MULTITHREAD);
+    // mphysicalSystem.SetSolverType(ChSolver::Type::APGD);
+    mphysicalSystem.SetSolverType(ChSolver::Type::SOR_MULTITHREAD);
     mphysicalSystem.SetMaxItersSolverSpeed(70);
     mphysicalSystem.SetMaxItersSolverStab(15);
     mphysicalSystem.SetParallelThreadNumber(4);

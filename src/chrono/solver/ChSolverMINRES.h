@@ -57,6 +57,8 @@ class ChApi ChSolverMINRES : public ChIterativeSolver {
 
     virtual ~ChSolverMINRES() {}
 
+    virtual Type GetType() const override { return Type::MINRES; }
+
     /// Performs the solution of the problem.
     /// \return  the maximum constraint violation after termination.
     virtual double Solve(ChSystemDescriptor& sysd  ///< system description with constraints and variables
@@ -82,9 +84,9 @@ class ChApi ChSolverMINRES : public ChIterativeSolver {
     bool GetDiagonalPreconditioning() { return this->diag_preconditioning; }
 
     /// Method to allow serialization of transient data to archives.
-    virtual void ArchiveOUT(ChArchiveOut& marchive) {
+    virtual void ArchiveOUT(ChArchiveOut& marchive) override {
         // version number
-        marchive.VersionWrite(1);
+        marchive.VersionWrite<ChSolverMINRES>();
         // serialize parent class
         ChIterativeSolver::ArchiveOUT(marchive);
         // serialize all member data:
@@ -95,9 +97,9 @@ class ChApi ChSolverMINRES : public ChIterativeSolver {
     }
 
     /// Method to allow de serialization of transient data from archives.
-    virtual void ArchiveIN(ChArchiveIn& marchive) {
+    virtual void ArchiveIN(ChArchiveIn& marchive) override {
         // version number
-        int version = marchive.VersionRead();
+        int version = marchive.VersionRead<ChSolverMINRES>();
         // deserialize parent class
         ChIterativeSolver::ArchiveIN(marchive);
         // stream in all member data:

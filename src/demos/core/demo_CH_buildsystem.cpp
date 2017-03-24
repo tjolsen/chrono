@@ -182,7 +182,7 @@ int main(int argc, char* argv[]) {
         GetLog() << "Now use an interator to scan through already-added constraints:\n\n";
         ChSystem::IteratorLinks myiter = my_system.IterBeginLinks();
         while (myiter != my_system.IterEndLinks()) {
-            GetLog() << "   Link class: " << (*myiter)->FactoryNameTag()
+            GetLog() << "   Link class: " << typeid((*myiter)).name()
                      << "  , leaves n.DOFs: " << (*myiter)->GetLeftDOF() << "\n";
             ++myiter;
         }
@@ -199,7 +199,7 @@ int main(int argc, char* argv[]) {
 
             // Print something on the console..
             GetLog() << "Time: " << chronoTime
-                     << "  Slider X position: " << my_link_CA->GetMarker1()->GetAbsCoord().pos.x
+                     << "  Slider X position: " << my_link_CA->GetMarker1()->GetAbsCoord().pos.x()
                      << "  Engine torque: " << my_link_AB->Get_mot_retorque() << "\n";
         }
     }

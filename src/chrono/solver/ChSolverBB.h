@@ -56,6 +56,8 @@ class ChApi ChSolverBB : public ChIterativeSolver {
 
     virtual ~ChSolverBB() {}
 
+    virtual Type GetType() const override { return Type::BARZILAIBORWEIN; }
+
     /// Performs the solution of the problem.
     /// \return  the maximum constraint violation after termination.
     virtual double Solve(ChSystemDescriptor& sysd  ///< system description with constraints and variables
@@ -66,7 +68,8 @@ class ChApi ChSolverBB : public ChIterativeSolver {
     /// Solve() automatically falls back to this function.
     /// It does not solve the Schur complement N*l-r=0 as Solve does, here the
     /// entire system KKT matrix with duals l and primals q is used.
-    /// ***NOT WORKING***
+    //***TODO*** Solve_SupportingStiffness() was not working. Is there a way to make this working? probably not..
+    //***DEPRECATED***
     virtual double Solve_SupportingStiffness(
         ChSystemDescriptor& sysd  ///< system description with constraints and variables
         );
@@ -87,9 +90,9 @@ class ChApi ChSolverBB : public ChIterativeSolver {
     bool GetDiagonalPreconditioning() { return this->diag_preconditioning; }
 
     /// Method to allow serialization of transient data to archives.
-    virtual void ArchiveOUT(ChArchiveOut& marchive) {
+    virtual void ArchiveOUT(ChArchiveOut& marchive) override {
         // version number
-        marchive.VersionWrite(1);
+        marchive.VersionWrite<ChSolverBB>();
         // serialize parent class
         ChIterativeSolver::ArchiveOUT(marchive);
         // serialize all member data:
@@ -99,9 +102,9 @@ class ChApi ChSolverBB : public ChIterativeSolver {
     }
 
     /// Method to allow de serialization of transient data from archives.
-    virtual void ArchiveIN(ChArchiveIn& marchive) {
+    virtual void ArchiveIN(ChArchiveIn& marchive) override {
         // version number
-        int version = marchive.VersionRead();
+        int version = marchive.VersionRead<ChSolverBB>();
         // deserialize parent class
         ChIterativeSolver::ArchiveIN(marchive);
         // stream in all member data:

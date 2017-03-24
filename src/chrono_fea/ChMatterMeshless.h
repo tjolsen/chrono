@@ -62,9 +62,9 @@ class ChApiFea ChNodeMeshless : public ChNodeXYZ, public ChContactable_1vars<3> 
     void SetCollisionRadius(double mr);
 
     // Set the mass of the node
-    void SetMass(double mmass) { this->variables.SetNodeMass(mmass); }
+    void SetMass(double mmass) override { this->variables.SetNodeMass(mmass); }
     // Get the mass of the node
-    double GetMass() const { return variables.GetNodeMass(); }
+    double GetMass() const override { return variables.GetNodeMass(); }
 
     // Access the variables of the node
     virtual ChVariablesNode& Variables() override { return variables; }
@@ -220,7 +220,7 @@ class ChApiFea ChMatterMeshless : public ChIndexedNodes {
     /// before anim starts (it is not automatically
     /// recomputed here because of performance issues.)
     void SetCollide(bool mcoll);
-    bool GetCollide() const { return do_collide; }
+    virtual bool GetCollide() const override { return do_collide; }
 
     /// Get the number of scalar coordinates (variables), if any, in this item
     virtual int GetDOF() override { return 3 * GetNnodes(); }
@@ -299,7 +299,7 @@ class ChApiFea ChMatterMeshless : public ChIndexedNodes {
     // Other functions
 
     /// Set no speed and no accelerations (but does not change the position)
-    void SetNoSpeedNoAcceleration();
+    void SetNoSpeedNoAcceleration() override;
 
     /// Synchronize coll.models coordinates and bounding boxes to the positions of the particles.
     virtual void SyncCollisionModels() override;

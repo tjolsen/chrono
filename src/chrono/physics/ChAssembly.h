@@ -311,7 +311,7 @@ class ChApi ChAssembly : public ChPhysicsItem {
                                    const ChState& x,
                                    const unsigned int off_v,
                                    const ChStateDelta& Dv) override;
-    virtual void IntLoadResidual_F(const unsigned int off, ChVectorDynamic<>& R, const double c);
+    virtual void IntLoadResidual_F(const unsigned int off, ChVectorDynamic<>& R, const double c) override;
     virtual void IntLoadResidual_Mv(const unsigned int off,
                                     ChVectorDynamic<>& R,
                                     const ChVectorDynamic<>& w,
@@ -325,7 +325,7 @@ class ChApi ChAssembly : public ChPhysicsItem {
                                      const double c,
                                      bool do_clamp,
                                      double recovery_clamp) override;
-    virtual void IntLoadConstraint_Ct(const unsigned int off, ChVectorDynamic<>& Qc, const double c);
+    virtual void IntLoadConstraint_Ct(const unsigned int off, ChVectorDynamic<>& Qc, const double c) override;
     virtual void IntToDescriptor(const unsigned int off_v,
                                  const ChStateDelta& v,
                                  const ChVectorDynamic<>& R,
@@ -397,6 +397,10 @@ class ChApi ChAssembly : public ChPhysicsItem {
     int nbodies_sleep;  ///< number of bodies that are sleeping
     int nbodies_fixed;  ///< number of bodies that are fixed
 };
+
+
+CH_CLASS_VERSION(ChAssembly,0)
+
 
 }  // end namespace chrono
 

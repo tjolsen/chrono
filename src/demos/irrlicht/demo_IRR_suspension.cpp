@@ -585,6 +585,8 @@ class MyEventReceiver : public IEventReceiver {
                         this->mcar->throttle = newthrottle;
                     }
                     break;
+                default:
+                    break;
             }
         }
 
@@ -670,7 +672,7 @@ int main(int argc, char* argv[]) {
             const collision::ChCollisionInfo& mcontactinfo,  ///< get info about contact (cannot change it)
             ChMaterialCouple& material)                      ///< you can modify this!
         {
-            if (mcontactinfo.vpA.x > 0)
+            if (mcontactinfo.vpA.x() > 0)
                 material.static_friction = 0.7f;  // On the right of the plane, less friction...
             else
                 material.static_friction = 1.0f;  // On the left of the plane, more friction...

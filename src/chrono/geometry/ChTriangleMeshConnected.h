@@ -32,6 +32,7 @@ class ChApi ChTriangleMeshConnected : public ChTriangleMesh {
     // Tag needed for class factory in archive (de)serialization:
     CH_FACTORY_TAG(ChTriangleMeshConnected)
 
+  public:
     std::vector<ChVector<double>> m_vertices;
     std::vector<ChVector<double>> m_normals;
     std::vector<ChVector<double>> m_UV;
@@ -85,16 +86,16 @@ class ChApi ChTriangleMeshConnected : public ChTriangleMesh {
     }
 
     /// Get the number of triangles already added to this mesh
-    virtual int getNumTriangles() const { return (int)m_face_v_indices.size(); }
+    virtual int getNumTriangles() const override { return (int)m_face_v_indices.size(); }
 
     /// Access the n-th triangle in mesh
-    virtual ChTriangle getTriangle(int index) const {
-        return ChTriangle(m_vertices[m_face_v_indices[index].x], m_vertices[m_face_v_indices[index].y],
-                          m_vertices[m_face_v_indices[index].z]);
+    virtual ChTriangle getTriangle(int index) const override {
+        return ChTriangle(m_vertices[m_face_v_indices[index].x()], m_vertices[m_face_v_indices[index].y()],
+                          m_vertices[m_face_v_indices[index].z()]);
     }
 
     /// Clear all data
-    virtual void Clear() {
+    virtual void Clear() override {
         this->getCoordsVertices().clear();
         this->getCoordsNormals().clear();
         this->getCoordsUV().clear();
@@ -112,7 +113,7 @@ class ChApi ChTriangleMeshConnected : public ChTriangleMesh {
     std::string GetFileName() { return m_filename; }
 
     /// Transform all vertexes, by displacing and rotating (rotation  via matrix, so also scaling if needed)
-    virtual void Transform(const ChVector<> displ, const ChMatrix33<> rotscale);
+    virtual void Transform(const ChVector<> displ, const ChMatrix33<> rotscale) override;
 
     /// Create a map of neighbouring triangles, vector of:
     /// [Ti TieA TieB TieC]
@@ -177,10 +178,12 @@ class ChApi ChTriangleMeshConnected : public ChTriangleMesh {
 
     /// Class to be used optionally in RefineMeshEdges()
     class ChRefineEdgeCriterion {
-    public:
-        // Compute lenght of an edge or more in general a 
+      public:
+        virtual ~ChRefineEdgeCriterion() {}
+
+        // Compute lenght of an edge or more in general a
         // merit function - the higher, the more likely the edge must be cut
-        virtual double ComputeLength(const int vert_a, const int  vert_b, ChTriangleMeshConnected* mmesh) = 0;
+        virtual double ComputeLength(const int vert_a, const int vert_b, ChTriangleMeshConnected* mmesh) = 0;
     };
 
     /// Performs mesh refinement using Rivara LEPP long-edge bisection algorithm.
@@ -207,7 +210,7 @@ class ChApi ChTriangleMeshConnected : public ChTriangleMesh {
 
     virtual void ArchiveOUT(ChArchiveOut& marchive) override {
         // version number
-        marchive.VersionWrite(1);
+        marchive.VersionWrite<ChTriangleMeshConnected>();
         // serialize parent class
         ChTriangleMesh::ArchiveOUT(marchive);
         // serialize all member data:
@@ -225,7 +228,7 @@ class ChApi ChTriangleMeshConnected : public ChTriangleMesh {
     /// Method to allow de serialization of transient data from archives.
     virtual void ArchiveIN(ChArchiveIn& marchive) override {
         // version number
-        int version = marchive.VersionRead();
+        int version = marchive.VersionRead<ChTriangleMeshConnected>();
         // deserialize parent class
         ChTriangleMesh::ArchiveIN(marchive);
         // stream in all member data:
@@ -242,6 +245,9 @@ class ChApi ChTriangleMeshConnected : public ChTriangleMesh {
 };
 
 }  // end namespace geometry
+
+CH_CLASS_VERSION(geometry::ChTriangleMeshConnected,0)
+
 }  // end namespace chrono
 
 #endif

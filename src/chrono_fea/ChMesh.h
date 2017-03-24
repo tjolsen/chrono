@@ -100,7 +100,7 @@ class ChApiFea ChMesh : public ChIndexedNodes {
     virtual int GetDOF_w() override { return n_dofs_w; }
 
     /// Override default in ChPhysicsItem
-    virtual bool GetCollide() override { return true; }
+    virtual bool GetCollide() const override { return true; }
 
     /// Reset counters for internal force and Jacobian evaluations.
     void ResetCounters() {
@@ -150,7 +150,7 @@ class ChApiFea ChMesh : public ChIndexedNodes {
     void Relax();
 
     /// Set no speed and no accelerations in nodes (but does not change reference positions)
-    void SetNoSpeedNoAcceleration();
+    void SetNoSpeedNoAcceleration() override;
 
     /// This recomputes the number of DOFs, constraints,
     /// as well as state offsets of contained items

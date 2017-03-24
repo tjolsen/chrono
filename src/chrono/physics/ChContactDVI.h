@@ -1,13 +1,14 @@
-//
+// =============================================================================
 // PROJECT CHRONO - http://projectchrono.org
 //
 // Copyright (c) 2014 projectchrono.org
-// All rights reserved.
+// All right reserved.
 //
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file at the top level of the distribution
-// and at http://projectchrono.org/license-chrono.txt.
+// Use of this source code is governed by a BSD-style license that can be found
+// in the LICENSE file at the top level of the distribution and at
+// http://projectchrono.org/license-chrono.txt.
 //
+// =============================================================================
 
 #ifndef CHCONTACTDVI_H
 #define CHCONTACTDVI_H
@@ -80,7 +81,7 @@ class ChContactDVI : public ChContactTuple<Ta, Tb> {
     virtual void Reset(Ta* mobjA,                               ///< collidable object A
                        Tb* mobjB,                               ///< collidable object B
                        const collision::ChCollisionInfo& cinfo  ///< data for the contact pair
-                       ) {
+                       ) override {
         // inherit base class:
         ChContactTuple<Ta, Tb>::Reset(mobjA, mobjB, cinfo);
 
@@ -138,7 +139,7 @@ class ChContactDVI : public ChContactTuple<Ta, Tb> {
     }
 
     /// Get the contact force, if computed, in contact coordinate system
-    virtual ChVector<> GetContactForce() { return react_force; }
+    virtual ChVector<> GetContactForce() const override { return react_force; }
 
     /// Get the contact friction coefficient
     virtual double GetFriction() { return Nx.GetFrictionCoefficient(); }
@@ -150,23 +151,23 @@ class ChContactDVI : public ChContactTuple<Ta, Tb> {
     // UPDATING FUNCTIONS
     //
 
-    virtual void ContIntStateGatherReactions(const unsigned int off_L, ChVectorDynamic<>& L) {
-        L(off_L) = react_force.x;
-        L(off_L + 1) = react_force.y;
-        L(off_L + 2) = react_force.z;
+    virtual void ContIntStateGatherReactions(const unsigned int off_L, ChVectorDynamic<>& L) override {
+        L(off_L) = react_force.x();
+        L(off_L + 1) = react_force.y();
+        L(off_L + 2) = react_force.z();
     }
 
-    virtual void ContIntStateScatterReactions(const unsigned int off_L, const ChVectorDynamic<>& L) {
-        react_force.x = L(off_L);
-        react_force.y = L(off_L + 1);
-        react_force.z = L(off_L + 2);
+    virtual void ContIntStateScatterReactions(const unsigned int off_L, const ChVectorDynamic<>& L) override {
+        react_force.x() = L(off_L);
+        react_force.y() = L(off_L + 1);
+        react_force.z() = L(off_L + 2);
     }
 
     virtual void ContIntLoadResidual_CqL(const unsigned int off_L,    ///< offset in L multipliers
                                          ChVectorDynamic<>& R,        ///< result: the R residual, R += c*Cq'*L
                                          const ChVectorDynamic<>& L,  ///< the L vector
                                          const double c               ///< a scaling factor
-                                         ) {
+                                         ) override {
         this->Nx.MultiplyTandAdd(R, L(off_L) * c);
         this->Tu.MultiplyTandAdd(R, L(off_L + 1) * c);
         this->Tv.MultiplyTandAdd(R, L(off_L + 2) * c);
@@ -177,7 +178,7 @@ class ChContactDVI : public ChContactTuple<Ta, Tb> {
                                          const double c,            ///< a scaling factor
                                          bool do_clamp,             ///< apply clamping to c*C?
                                          double recovery_clamp      ///< value for min/max clamping of c*C
-                                         ) {
+                                         ) override {
         bool bounced = false;
 
         // Elastic Restitution model (use simple Newton model with coeffcient e=v(+)/v(-))
@@ -193,7 +194,7 @@ class ChContactDVI : public ChContactTuple<Ta, Tb> {
 
                 double h = this->container->GetSystem()->GetStep();  // = 1.0 / c;  // not all steppers have c = 1/h
 
-                double neg_rebounce_speed = Vrel_cplane.x * this->restitution;
+                double neg_rebounce_speed = Vrel_cplane.x() * this->restitution;
                 if (neg_rebounce_speed < -this->container->GetSystem()->GetMinBounceSpeed())
                     if (this->norm_dist + neg_rebounce_speed * h < 0) {
                         // CASE: BOUNCE
@@ -242,7 +243,7 @@ class ChContactDVI : public ChContactTuple<Ta, Tb> {
     virtual void ContIntToDescriptor(const unsigned int off_L,    ///< offset in L, Qc
                                      const ChVectorDynamic<>& L,  ///<
                                      const ChVectorDynamic<>& Qc  ///<
-                                     ) {
+                                     ) override {
         // only for solver warm start
         Nx.Set_l_i(L(off_L));
         Tu.Set_l_i(L(off_L + 1));
@@ -256,25 +257,25 @@ class ChContactDVI : public ChContactTuple<Ta, Tb> {
 
     virtual void ContIntFromDescriptor(const unsigned int off_L,  ///< offset in L
                                        ChVectorDynamic<>& L       ///<
-                                       ) {
+                                       ) override {
         L(off_L) = Nx.Get_l_i();
         L(off_L + 1) = Tu.Get_l_i();
         L(off_L + 2) = Tv.Get_l_i();
     }
 
-    virtual void InjectConstraints(ChSystemDescriptor& mdescriptor) {
+    virtual void InjectConstraints(ChSystemDescriptor& mdescriptor) override {
         mdescriptor.InsertConstraint(&Nx);
         mdescriptor.InsertConstraint(&Tu);
         mdescriptor.InsertConstraint(&Tv);
     }
 
-    virtual void ConstraintsBiReset() {
+    virtual void ConstraintsBiReset() override {
         Nx.Set_b_i(0.);
         Tu.Set_b_i(0.);
         Tv.Set_b_i(0.);
     }
 
-    virtual void ConstraintsBiLoad_C(double factor = 1., double recovery_clamp = 0.1, bool do_clamp = false) {
+    virtual void ConstraintsBiLoad_C(double factor = 1., double recovery_clamp = 0.1, bool do_clamp = false) override {
         bool bounced = false;
 
         // Elastic Restitution model (use simple Newton model with coeffcient e=v(+)/v(-))
@@ -290,7 +291,7 @@ class ChContactDVI : public ChContactTuple<Ta, Tb> {
 
                 double h = 1.0 / factor;  // inverse timestep is factor
 
-                double neg_rebounce_speed = Vrel_cplane.x * this->restitution;
+                double neg_rebounce_speed = Vrel_cplane.x() * this->restitution;
                 if (neg_rebounce_speed < -this->container->GetSystem()->GetMinBounceSpeed())
                     if (this->norm_dist + neg_rebounce_speed * h < 0) {
                         // CASE: BOUNCE
@@ -334,11 +335,11 @@ class ChContactDVI : public ChContactTuple<Ta, Tb> {
         }
     }
 
-    virtual void ConstraintsFetch_react(double factor) {
+    virtual void ConstraintsFetch_react(double factor) override {
         // From constraints to react vector:
-        react_force.x = Nx.Get_l_i() * factor;
-        react_force.y = Tu.Get_l_i() * factor;
-        react_force.z = Tv.Get_l_i() * factor;
+        react_force.x() = Nx.Get_l_i() * factor;
+        react_force.y() = Tu.Get_l_i() * factor;
+        react_force.z() = Tv.Get_l_i() * factor;
     }
 };
 

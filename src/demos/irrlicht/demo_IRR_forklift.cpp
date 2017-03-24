@@ -405,6 +405,8 @@ class MyEventReceiver : public IEventReceiver {
                     if (auto mfun = std::dynamic_pointer_cast<ChFunction_Const>(forklift->link_engineArm->Get_rot_funct()))
                         mfun->Set_yconst(-0.005 + mfun->Get_yconst());
                     return true;
+                default:
+                    break;
             }
         }
 
@@ -488,7 +490,7 @@ int main(int argc, char* argv[]) {
 
     my_system.SetMaxItersSolverSpeed(20);  // the higher, the easier to keep the constraints 'mounted'.
 
-    my_system.SetSolverType(ChSystem::SOLVER_SOR);
+    my_system.SetSolverType(ChSolver::Type::SOR);
 
     //
     // THE SOFT-REAL-TIME CYCLE, SHOWING THE SIMULATION

@@ -102,6 +102,8 @@ class MyEventReceiver : public IEventReceiver {
                         GLOBAL_compliance = (((float)pos) / 100) / 1000000.0f;
                     }
                     break;
+                default:
+                    break;
             }
         }
 
@@ -249,7 +251,7 @@ int main(int argc, char* argv[]) {
 
     // Modify some setting of the physical system for the simulation, if you want
 
-    mphysicalSystem.SetSolverType(ChSystem::SOLVER_SOR_MULTITHREAD);
+    mphysicalSystem.SetSolverType(ChSolver::Type::SOR_MULTITHREAD);
     mphysicalSystem.SetMaxItersSolverSpeed(20);
     // mphysicalSystem.SetMaxItersSolverStab(5);
 

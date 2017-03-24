@@ -47,7 +47,7 @@ void ChOpenGLBars::AddBar(double left, double right, double top, double bottom, 
     vec3 B(left, top, 0);
     vec3 C(right, top, 0);
     vec3 D(right, bottom, 0);
-    int index = this->data.size();
+    int index = (int)this->data.size();
 
     this->data.push_back(ChOpenGLVertexAttributesPCN(C, color, glm::vec3(1, 0, 0)));
     this->data.push_back(ChOpenGLVertexAttributesPCN(B, color, glm::vec3(1, 0, 0)));
@@ -99,9 +99,9 @@ bool ChOpenGLBars::PostInitialize() {
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, pcn_size, (GLvoid*)(sizeof(vec3) * 0));  // Position
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, pcn_size, (GLvoid*)(sizeof(vec3) * 1));  // Color
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, pcn_size, (GLvoid*)(sizeof(vec3) * 2));  // Normal
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, (GLsizei)pcn_size, (GLvoid*)(sizeof(vec3) * 0));  // Position
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, (GLsizei)pcn_size, (GLvoid*)(sizeof(vec3) * 1));  // Color
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, (GLsizei)pcn_size, (GLvoid*)(sizeof(vec3) * 2));  // Normal
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -140,7 +140,7 @@ void ChOpenGLBars::Draw(const mat4& projection, const mat4& view) {
     glBindBuffer(GL_ARRAY_BUFFER, vertex_data_handle);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->vertex_element_handle);
 
-    glDrawElements(GL_TRIANGLES, this->vertex_indices.size(), GL_UNSIGNED_INT, (void*)0);
+    glDrawElements(GL_TRIANGLES, (GLsizei)this->vertex_indices.size(), GL_UNSIGNED_INT, (void*)0);
     this->GLReturnedError("ChOpenGLBars::Draw - after draw");
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);

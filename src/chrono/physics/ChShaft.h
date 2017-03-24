@@ -194,7 +194,7 @@ class ChApi ChShaft : public ChPhysicsItem {
     // Other functions
 
     /// Set no speed and no accelerations (but does not change the position)
-    void SetNoSpeedNoAcceleration();
+    void SetNoSpeedNoAcceleration() override;
 
     /// Set the torque applied to the shaft
     void SetAppliedTorque(double mtorque) { torque = mtorque; }
@@ -263,6 +263,9 @@ class ChApi ChShaft : public ChPhysicsItem {
     /// Method to allow deserialization of transient data from archives.
     virtual void ArchiveIN(ChArchiveIn& marchive) override;
 };
+
+CH_CLASS_VERSION(ChShaft,0)
+
 
 }  // end namespace chrono
 

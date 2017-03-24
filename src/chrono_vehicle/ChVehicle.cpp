@@ -42,7 +42,9 @@ ChVehicle::ChVehicle(ChMaterialSurfaceBase::ContactMethod contact_method) : m_ow
 
     switch (contact_method) {
         case ChMaterialSurfaceBase::DVI:
-            m_system->SetSolverType(ChSystem::SOLVER_BARZILAIBORWEIN);
+            m_system->SetSolverType(ChSolver::Type::BARZILAIBORWEIN);
+            break;
+        default:
             break;
     }
 }

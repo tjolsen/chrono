@@ -258,6 +258,10 @@ set(CV_WV_SUSPENSION_FILES
     wheeled_vehicle/suspension/ChHendricksonPRIMAXX.cpp
     wheeled_vehicle/suspension/ChMacPhersonStrut.h
     wheeled_vehicle/suspension/ChMacPhersonStrut.cpp
+    wheeled_vehicle/suspension/ChSemiTrailingArm.h
+    wheeled_vehicle/suspension/ChSemiTrailingArm.cpp
+    wheeled_vehicle/suspension/ChThreeLinkIRS.h
+    wheeled_vehicle/suspension/ChThreeLinkIRS.cpp
 
     wheeled_vehicle/suspension/DoubleWishbone.h
     wheeled_vehicle/suspension/DoubleWishbone.cpp
@@ -271,8 +275,30 @@ set(CV_WV_SUSPENSION_FILES
     wheeled_vehicle/suspension/HendricksonPRIMAXX.cpp
     wheeled_vehicle/suspension/MacPhersonStrut.h
     wheeled_vehicle/suspension/MacPhersonStrut.cpp
+    wheeled_vehicle/suspension/SemiTrailingArm.h
+    wheeled_vehicle/suspension/SemiTrailingArm.cpp
+    wheeled_vehicle/suspension/ThreeLinkIRS.h
+    wheeled_vehicle/suspension/ThreeLinkIRS.cpp
 )
 source_group("wheeled_vehicle\\suspension" FILES ${CV_WV_SUSPENSION_FILES})
+
+set(CV_WV_TEST_RIG_FILES
+    wheeled_vehicle/test_rig/ChSuspensionTestRig.h
+    wheeled_vehicle/test_rig/ChSuspensionTestRig.cpp
+    wheeled_vehicle/test_rig/ChDriverSTR.h
+    wheeled_vehicle/test_rig/ChDriverSTR.cpp
+    wheeled_vehicle/test_rig/ChDataDriverSTR.h
+    wheeled_vehicle/test_rig/ChDataDriverSTR.cpp
+)
+if(ENABLE_MODULE_IRRLICHT)
+    set(CVIRR_WV_TEST_RIG_FILES
+        wheeled_vehicle/test_rig/ChIrrGuiDriverSTR.h
+        wheeled_vehicle/test_rig/ChIrrGuiDriverSTR.cpp    
+    )
+else()
+    set(CVIRR_WV_TEST_RIG_FILES "")
+endif()
+source_group("wheeled_vehicle\\test_rig" FILES ${CV_WV_TEST_RIG_FILES} ${CVIRR_WV_TEST_RIG_FILES})
 
 set(CV_WV_TIRE_FILES
     wheeled_vehicle/tire/ChRigidTire.h
@@ -320,15 +346,11 @@ source_group("wheeled_vehicle\\tire" FILES ${CV_WV_TIRE_FILES} ${CV_WV_FEATIRE_F
 set(CV_WV_UTILS_FILES
     wheeled_vehicle/utils/ChWheeledVehicleAssembly.h
     wheeled_vehicle/utils/ChWheeledVehicleAssembly.cpp
-    wheeled_vehicle/utils/ChSuspensionTestRig.h
-    wheeled_vehicle/utils/ChSuspensionTestRig.cpp
 )
 if(ENABLE_MODULE_IRRLICHT)
     set(CVIRR_WV_UTILS_FILES
         wheeled_vehicle/utils/ChWheeledVehicleIrrApp.h
         wheeled_vehicle/utils/ChWheeledVehicleIrrApp.cpp
-        wheeled_vehicle/utils/ChIrrGuiDriverSTR.h
-        wheeled_vehicle/utils/ChIrrGuiDriverSTR.cpp
     )
 else()
     set(CVIRR_WV_UTILS_FILES "")
@@ -566,7 +588,7 @@ add_library(ChronoEngine_vehicle SHARED
     ${CVIRR_DRIVER_FILES}
     ${CV_POVERTRAIN_FILES}
     ${CV_TERRAIN_FILES}
-	${CV_FEATERRAIN_FILES}
+    ${CV_FEATERRAIN_FILES}
     ${CV_UTILS_FILES}
     ${CVIRR_UTILS_FILES}
 #
@@ -576,6 +598,8 @@ add_library(ChronoEngine_vehicle SHARED
     ${CV_WV_DRIVELINE_FILES}
     ${CV_WV_STEERING_FILES}
     ${CV_WV_SUSPENSION_FILES}
+    ${CV_WV_TEST_RIG_FILES}
+    ${CVIRR_WV_TEST_RIG_FILES}
     ${CV_WV_TIRE_FILES}
     ${CV_WV_FEATIRE_FILES}
     ${CV_WV_UTILS_FILES}

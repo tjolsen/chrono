@@ -24,7 +24,7 @@
 
 #include "chrono/core/ChApiCE.h"
 #include "chrono/core/ChMath.h"
-#include "chrono/physics/ChFilePS.h"
+#include "chrono/core/ChFilePS.h"
 
 namespace chrono {
 
@@ -151,7 +151,7 @@ class ChApi ChFunction {
 
     /// Get the x and y position of handle, given identifier.
     /// If set mode, x and y values are stored. Return false if handle not found.
-    virtual int HandleAccess(int handle_id, double mx, double my, bool set_mode) { return TRUE; }
+    virtual bool HandleAccess(int handle_id, double mx, double my, bool set_mode) { return true; }
 
     /// Method to allow serialization of transient data to archives
     virtual void ArchiveOUT(ChArchiveOut& marchive);
@@ -171,6 +171,8 @@ class ChApi ChFunction {
 };
 
 /// @} chrono_functions
+
+CH_CLASS_VERSION(ChFunction,0)
 
 }  // end namespace chrono
 

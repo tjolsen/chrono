@@ -90,6 +90,8 @@ class MyEventReceiver : public IEventReceiver {
                     if (STATIC_rot_speed < -MAX_ROT_SPEED)
                         STATIC_rot_speed = -MAX_ROT_SPEED;
                     return true;
+                default:
+                    break;
             }
         }
 
@@ -279,9 +281,9 @@ int main(int argc, char* argv[]) {
 
     // Prepare the physical system for the simulation
 
-    mphysicalSystem.SetIntegrationType(ChSystem::INT_EULER_IMPLICIT_PROJECTED);
+    mphysicalSystem.SetTimestepperType(ChTimestepper::Type::EULER_IMPLICIT_PROJECTED);
 
-    mphysicalSystem.SetSolverType(ChSystem::SOLVER_SOR);
+    mphysicalSystem.SetSolverType(ChSolver::Type::SOR);
 
     mphysicalSystem.SetMaxItersSolverSpeed(30);
     mphysicalSystem.SetMaxItersSolverStab(30);
@@ -309,15 +311,15 @@ int main(int argc, char* argv[]) {
         ChFrame<> abs_roll_wA = roll_twist >> f2_wA >> ChFrame<>(mTrussPlatform->GetBody()->GetCoord());
         double wheel_A_rotspeed =
             (STATIC_rot_speed * platform_radius) +
-            ((abs_roll_wA.GetA().MatrT_x_Vect(imposed_speed)).x / sin(roller_angle)) / wheel_radius;
+            ((abs_roll_wA.GetA().MatrT_x_Vect(imposed_speed)).x() / sin(roller_angle)) / wheel_radius;
         ChFrame<> abs_roll_wB = roll_twist >> f2_wB >> ChFrame<>(mTrussPlatform->GetBody()->GetCoord());
         double wheel_B_rotspeed =
             (STATIC_rot_speed * platform_radius) +
-            ((abs_roll_wB.GetA().MatrT_x_Vect(imposed_speed)).x / sin(roller_angle)) / wheel_radius;
+            ((abs_roll_wB.GetA().MatrT_x_Vect(imposed_speed)).x() / sin(roller_angle)) / wheel_radius;
         ChFrame<> abs_roll_wC = roll_twist >> f2_wC >> ChFrame<>(mTrussPlatform->GetBody()->GetCoord());
         double wheel_C_rotspeed =
             (STATIC_rot_speed * platform_radius) +
-            ((abs_roll_wC.GetA().MatrT_x_Vect(imposed_speed)).x / sin(roller_angle)) / wheel_radius;
+            ((abs_roll_wC.GetA().MatrT_x_Vect(imposed_speed)).x() / sin(roller_angle)) / wheel_radius;
 
         if (auto mfun = std::dynamic_pointer_cast<ChFunction_Const>(my_link_shaftA->Get_spe_funct()))
             mfun->Set_yconst(wheel_A_rotspeed);

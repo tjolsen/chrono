@@ -65,7 +65,7 @@ DWORD WINAPI Thread_no_1(LPVOID lpParam) {
 void ChThreadsWIN32::sendRequest(uint32_t uiCommand, void* uiUserPtr, uint32_t threadId) {
     ChThreadStateWIN32& spuStatus = m_activeSpuStatus[threadId];
     btAssert(threadId >= 0);
-    btAssert(threadId < m_activeSpuStatus.size());
+    btAssert(threadId < (unsigned)m_activeSpuStatus.size());
 
     spuStatus.m_commandId = uiCommand;
     spuStatus.m_status = 1;
@@ -81,7 +81,7 @@ void ChThreadsWIN32::waitForResponse(unsigned int* puiArgument0, unsigned int* p
 
     int last = -1;
 
-    DWORD res = WaitForMultipleObjects(m_completeHandles.size(), &m_completeHandles[0], FALSE, INFINITE);
+    DWORD res = WaitForMultipleObjects(m_completeHandles.size(), &m_completeHandles[0], 0, INFINITE);
     btAssert(res != WAIT_FAILED);
     last = res - WAIT_OBJECT_0;
 
