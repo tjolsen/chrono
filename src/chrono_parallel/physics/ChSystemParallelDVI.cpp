@@ -93,6 +93,14 @@ void ChSystemParallelDVI::CalculateContactForces() {
     LOG(INFO) << "ChSystemParallelDVI::CalculateContactForces() ";
 
     DynamicVector<real>& gamma = data_manager->host_data.gamma;
+    /*
+     * Put in the Compatible contact dynamics fix here.
+     * Update the "gamma" vector (see technical report for definition).
+     * Use the data_manager->host_data.Dt (my B matrix)
+     */
+
+
+
     Fc = data_manager->host_data.D * gamma / data_manager->settings.step_size;
 }
 
