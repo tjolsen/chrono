@@ -98,9 +98,13 @@ void ChSystemParallelDVI::CalculateContactForces() {
      * Update the "gamma" vector (see technical report for definition).
      * Use the data_manager->host_data.Dt (my B matrix)
      */
+    //Convert blaze data_manager->host_data.Dt (row-major) to an Eigen::SparseMatrix (col-major)
 
+    // Perform QR Decomp of "B"
 
+    // Iteratively project u = B\(gamma - h), u \perp h until converged
 
+    
     Fc = data_manager->host_data.D * gamma / data_manager->settings.step_size;
 }
 
